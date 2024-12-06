@@ -471,12 +471,22 @@ void write_root_dir_block(int fd)
 	bytes_remaining -= lost_and_found_entry.rec_len;
 
 	struct ext2_dir_entry hello_world_entry = {0};
-	dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello");
+	dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
 	dir_entry_write(hello_world_entry, fd);
 
 	bytes_remaining -= hello_world_entry.rec_len;
 
 	//need to add hello entry
+	struct ext2_dir_entry hello_sym_entry={0};
+	dir_entry_set(hello_sym_entry, HELLO_INO, "hello");
+	dir_entry_write(hello_sym_entry, fd);
+	bytes_remaining-= hello_sym_entry.rec_len;
+
+	struct ext2_dir_entry fill_entry ={0};
+	fill_entry.rec_len = bytes_remaining;
+	dir_entry_write(fill_entry, fd);
+
+
 	
 
 
@@ -514,6 +524,21 @@ void write_lost_and_found_dir_block(int fd) {
 void write_hello_world_file_block(int fd)
 {
 	// TODO It's all yours
+	off_t off =BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO);
+	off = lseek(fd, off, SEEK_SET);
+	if(off==-1){
+		errno_exit("lseek");
+	}
+
+	char block_data[BLOCK_SIZE];
+	memset(block_data, 0, sizeof(block_data));
+	strcpy(block_data, "Hello world\n");
+
+	ssize_t written_bytes = write(fd, block_data, BLOCK_SIZE);
+
+	if(written_bytes == -1){
+		errno_exit("write");
+	}
 }
 
 int main(int argc, char *argv[]) {
