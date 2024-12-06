@@ -208,7 +208,7 @@ void write_superblock(int fd) {
 	superblock.s_blocks_count = NUM_BLOCKS;
 	superblock.s_r_blocks_count = 0;
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
-	superblock.s_free_inodes_count = NUM_FREE_BLOCKS;
+	superblock.s_free_inodes_count = NUM_FREE_INODES;
 	superblock.s_first_data_block = SUPERBLOCK_BLOCKNO; /* First Data Block */
 	superblock.s_log_block_size = 0;					/* 1024 */
 	superblock.s_log_frag_size = 0;						/* 1024 */
@@ -219,7 +219,7 @@ void write_superblock(int fd) {
 	superblock.s_wtime = current_time;	/* Write time */
 	superblock.s_mnt_count         = 0; /* Number of times mounted so far */
 	superblock.s_max_mnt_count     = -1; /* Make this unlimited */
-	superblock.s_magic = -1; /* ext2 Signature */
+	superblock.s_magic = EXT2_SUPER_MAGIC; /* ext2 Signature */
 	superblock.s_state             = 1; /* File system is clean */
 	superblock.s_errors            = 1; /* Ignore the error (continue on) */
 	superblock.s_minor_rev_level   = 0; /* Leave this as 0 */
@@ -412,7 +412,7 @@ void write_inode_table(int fd) {
 	hello_world_inode.i_ctime=current_time;
 	hello_world_inode.i_mtime=current_time;
 	hello_world_inode.i_dtime=0;
-	hello_world_inode.i_gid=0;
+	hello_world_inode.i_gid=1000;
 	hello_world_inode.i_links_count=1;
 	hello_world_inode.i_blocks =2;
 	hello_world_inode.i_block[0]=HELLO_WORLD_FILE_BLOCKNO;
